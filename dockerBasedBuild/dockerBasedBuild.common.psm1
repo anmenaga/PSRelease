@@ -129,9 +129,9 @@ function Invoke-BuildInDocker
     $projectAssetsCounter = 1
     $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
     $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
-    Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
+    Get-ChildItem $($BuildData.RepoDestinationPath)\project.assets.json -Recurse | ForEach-Object {
         $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $projectAssetsCounter
-        New-Item -Path $itemDestination -ItemType Directory -Force
+        $null = New-Item -Path $itemDestination -ItemType Directory -Force
         $file = $_.FullName
         Write-Verbose "Copying $file to $itemDestination" -verbose
         Copy-Item -Path $file -Destination "$itemDestination\" -Force
