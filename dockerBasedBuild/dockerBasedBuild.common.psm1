@@ -130,9 +130,10 @@ function Invoke-BuildInDocker
     $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
     $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
     
-    $projectAssetsSearchPattern = Join-Path -Path $RepoLocation -ChildPath 'project.assets.json'
+    $projectAssetsSearchPattern = 'project.assets.json'
     Write-Verbose "Searching $projectAssetsSearchPattern ..." -verbose
     $t1 = Get-ChildItem $projectAssetsSearchPattern -Recurse
+    Write-Verbose "Got $($t1.Count) results." -Verbose
     $t1 | % {Write-Verbose $_ -Verbose}
 
     <#$projectAssetsSearchPattern = Join-Path -Path $BuildData.RepoDestinationPath -ChildPath 'project.assets.json'
