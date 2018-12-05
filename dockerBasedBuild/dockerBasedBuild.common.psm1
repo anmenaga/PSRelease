@@ -125,6 +125,7 @@ function Invoke-BuildInDocker
     Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
 
     Write-Verbose "Exporting project.assets files ..." -verbose
+    $destination = Get-Destination
     $projectAssetsCounter = 1
     $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
     $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
@@ -138,6 +139,7 @@ function Invoke-BuildInDocker
     }
     Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
     Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Verbose "Exported to $projectAssetsZip" -verbose
 }
 
 # Clone a github repo and recursively init submodules
