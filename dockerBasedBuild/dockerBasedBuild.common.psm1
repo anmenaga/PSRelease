@@ -135,12 +135,12 @@ function Invoke-BuildInDocker
     $t1 = Get-ChildItem $projectAssetsSearchPattern -Recurse
     $t1 | % {Write-Verbose $_ -Verbose}
 
-    $projectAssetsSearchPattern = Join-Path -Path $BuildData.RepoDestinationPath -ChildPath 'project.assets.json'
+    <#$projectAssetsSearchPattern = Join-Path -Path $BuildData.RepoDestinationPath -ChildPath 'project.assets.json'
     Write-Verbose "Searching $projectAssetsSearchPattern ..." -verbose
     $t1 = Get-ChildItem $projectAssetsSearchPattern -Recurse
-    $t1 | % {Write-Verbose $_ -Verbose}
+    $t1 | % {Write-Verbose $_ -Verbose}#>
 
-    Get-ChildItem $projectAssetsSearchPattern -Recurse | ForEach-Object {
+    <#Get-ChildItem $projectAssetsSearchPattern -Recurse | ForEach-Object {
         $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $projectAssetsCounter
         $null = New-Item -Path $itemDestination -ItemType Directory -Force
         $file = $_.FullName
@@ -150,7 +150,7 @@ function Invoke-BuildInDocker
     }
     Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
     Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Verbose "Exported to $projectAssetsZip" -verbose
+    Write-Verbose "Exported to $projectAssetsZip" -verbose#>
 }
 
 # Clone a github repo and recursively init submodules
