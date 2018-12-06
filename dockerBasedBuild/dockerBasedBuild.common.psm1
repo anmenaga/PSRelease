@@ -125,7 +125,8 @@ function Invoke-BuildInDocker
     Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
 
 
-    Invoke-Docker -Command 'exec' -Params @("pswscbuild", '"Write-Verbose HELLO-FROM-DOCKER-IMAGE-!!!!!!!!!!" -Verbose')
+    Invoke-Docker -Command 'ps' -Params '--format', '{{ json .}}', '--all'
+    
 
     <#Write-Verbose "Exporting project.assets files ..." -verbose
     $destination = Get-Destination
