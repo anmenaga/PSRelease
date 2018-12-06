@@ -124,17 +124,17 @@ function Invoke-BuildInDocker
 
     Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
 
-    Write-Verbose "Exporting project.assets files ..." -verbose
+    <#Write-Verbose "Exporting project.assets files ..." -verbose
     $destination = Get-Destination
     $projectAssetsCounter = 1
     $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
-    $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
+    $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'#>
     
-    $projectAssetsSearchPattern = 'project.assets.json'
+    <#$projectAssetsSearchPattern = 'project.assets.json'
     Write-Verbose "Searching $projectAssetsSearchPattern ..." -verbose
     $t1 = Get-ChildItem $projectAssetsSearchPattern -Recurse
     Write-Verbose "Got $($t1.Count) results." -Verbose
-    $t1 | % {Write-Verbose $_ -Verbose}
+    $t1 | % {Write-Verbose $_ -Verbose}#>
 
     <#$projectAssetsSearchPattern = Join-Path -Path $BuildData.RepoDestinationPath -ChildPath 'project.assets.json'
     Write-Verbose "Searching $projectAssetsSearchPattern ..." -verbose
