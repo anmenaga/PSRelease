@@ -125,7 +125,8 @@ function Invoke-BuildInDocker
     Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
 
 
-    Invoke-Docker -Command 'ps' -Params '--format', '{{ json .}}', '--all'
+    $r = Invoke-Docker -Command 'ps' -Params '--format', '{{ json .}}', '--all'
+    Write-Verbose "Docker output: $r" -Verbose
     
 
     <#Write-Verbose "Exporting project.assets files ..." -verbose
