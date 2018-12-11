@@ -593,6 +593,19 @@ function script:logerror([string]$message) {
     [console]::ResetColor()
 }
 
+
+class Artifact
+{
+    # File filter for the artifact
+    [String]$Filter
+    # Folder to put artifact from this build in.
+    [String]$Bucket
+    # The name of a VSTS variable to set for the path to the artifact.
+    [String]$VariableName
+    # Publish artifact as a folder (works more reliably)
+    #[Bool]$PublishAsFolder
+}
+
 # Class which describes the build data.
 class BuildData
 {
@@ -621,6 +634,7 @@ class BuildData
     # Required: The name that we will call the image
     [String]$DockerImageName
 
+    [Artifact[]]$ExpectedArtifacts
     # Optional: folder to put binaries from this build in.
     [String]$BinaryBucket = 'release'
 
