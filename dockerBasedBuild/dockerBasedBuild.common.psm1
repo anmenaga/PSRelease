@@ -96,6 +96,30 @@ function Invoke-BuildInDocker
 
     Invoke-DockerBuild -ImageName $imageName -RepoLocation $RepoLocation -ContainerRepoLocation $BuildData.RepoDestinationPath -BuildCommand $BuildData.BuildCommand -Parameters $Parameters @extraBuildParams
 
+    foreach($Artifact in $BuildData.ExpectedArtifacts)
+    {
+        $publishParams = @{}
+
+        if ($Artifact.VariableName)
+        {
+            $publishParams['Variable'] = $Artifact.VariableName
+        }
+
+        if ($Artifact.PublishAsFolder)
+        {
+            $publishParams['PublishAsFolder'] = $true
+        }
+    
+        if ($Artifact.ArtifactAsFolder)
+        {
+            $publishParams['ArtifactAsFolder'] = $true
+        }
+
+        Write-Host $Artifact
+        #Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
+    }
+
+    <#
     $publishParams = @{}
     if ($BuildData.VariableForExtractedBinariesPath)
     {
@@ -123,40 +147,10 @@ function Invoke-BuildInDocker
     }
 
     Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
+#>
 
-
-    $r = Invoke-Docker -Command 'ps' -Params '--format', '{{ json .}}', '--all'
-    Write-Verbose "Docker output: $r" -Verbose
     
 
-    <#Write-Verbose "Exporting project.assets files ..." -verbose
-    $destination = Get-Destination
-    $projectAssetsCounter = 1
-    $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
-    $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'#>
-    
-    <#$projectAssetsSearchPattern = 'project.assets.json'
-    Write-Verbose "Searching $projectAssetsSearchPattern ..." -verbose
-    $t1 = Get-ChildItem $projectAssetsSearchPattern -Recurse
-    Write-Verbose "Got $($t1.Count) results." -Verbose
-    $t1 | % {Write-Verbose $_ -Verbose}#>
-
-    <#$projectAssetsSearchPattern = Join-Path -Path $BuildData.RepoDestinationPath -ChildPath 'project.assets.json'
-    Write-Verbose "Searching $projectAssetsSearchPattern ..." -verbose
-    $t1 = Get-ChildItem $projectAssetsSearchPattern -Recurse
-    $t1 | % {Write-Verbose $_ -Verbose}#>
-
-    <#Get-ChildItem $projectAssetsSearchPattern -Recurse | ForEach-Object {
-        $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $projectAssetsCounter
-        $null = New-Item -Path $itemDestination -ItemType Directory -Force
-        $file = $_.FullName
-        Write-Verbose "Copying $file to $itemDestination" -verbose
-        Copy-Item -Path $file -Destination "$itemDestination\" -Force
-        $projectAssetsCounter++
-    }
-    Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
-    Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Verbose "Exported to $projectAssetsZip" -verbose#>
 }
 
 # Clone a github repo and recursively init submodules
@@ -597,13 +591,15 @@ function script:logerror([string]$message) {
 class Artifact
 {
     # File filter for the artifact
-    [String]$Filter
+    [String[]]$Filter
     # Folder to put artifact from this build in.
     [String]$Bucket
-    # The name of a VSTS variable to set for the path to the artifact.
+    # Optional: The name of a VSTS variable to set for the path to the artifact.
     [String]$VariableName
-    # Publish artifact as a folder (works more reliably)
-    #[Bool]$PublishAsFolder
+    # Optional: Publish the artifacts as a single folder rather than individual files (works more reliably)
+    [Bool]$PublishAsFolder = $false
+    # Optional: Make multiple files published appear as a folder in VSTS
+    [Bool]$ArtifactAsFolder = $false
 }
 
 # Class which describes the build data.
