@@ -57,8 +57,10 @@ $script:publishedFiles = @()
 function Publish-VstsBuildArtifact
 {
     param(
-        [parameter(Mandatory,HelpMessage="Path to publish artifacts from.")]
+        [parameter(Mandatory,HelpMessage="Folder Path to publish artifacts from.")]
         [string]$ArtifactPath,
+        [parameter(Mandatory,HelpMessage="Filter for artifacts.")]
+        [string[]]$Filter,
         [parameter(HelpMessage="The folder to same artifacts to.")]
         [string]$Bucket = 'release',
         [parameter(HelpMessage="If an artifact is unzipped, set a variable to the destination path with this name. Only supported with '-ExpectedCount 1'")]
@@ -71,8 +73,8 @@ function Publish-VstsBuildArtifact
         [Switch]$ArtifactAsFolder
     )
     $ErrorActionPreference = 'Continue'
-    $filter = Join-Path -Path $ArtifactPath -ChildPath '*'
-    Write-VstsInformation -message "Publishing artifacts: $filter"
+    $ArtifactPathRoot = Join-Path -Path $ArtifactPath -ChildPath '*'
+    Write-VstsInformation -message "Publishing artifacts: $ArtifactPath : $($Filter -join ',')"
 
     if ($PublishAsFolder.IsPresent)
     {
@@ -88,7 +90,7 @@ function Publish-VstsBuildArtifact
     }
 
     # In VSTS, publish artifacts appropriately
-    $files = Get-ChildItem -Path $filter -Recurse | Select-Object -ExpandProperty FullName
+    $files = Get-ChildItem -Path $ArtifactPathRoot -Include $Filter -Recurse | Select-Object -ExpandProperty FullName
     $destinationPath = Join-Path (Get-StagingDirectory) -ChildPath $Bucket
     if(-not (Test-Path $destinationPath))
     {
