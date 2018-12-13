@@ -59,7 +59,7 @@ function Publish-VstsBuildArtifact
     param(
         [parameter(Mandatory,HelpMessage="Folder Path to publish artifacts from.")]
         [string]$ArtifactPath,
-        [parameter(Mandatory,HelpMessage="Filter for artifacts.")]
+        [parameter(Mandatory,HelpMessage="Filter for artifact files; Can be '*'.")]
         [string[]]$Filter,
         [parameter(HelpMessage="The folder to same artifacts to.")]
         [string]$Bucket = 'release',
@@ -106,19 +106,22 @@ function Publish-VstsBuildArtifact
 
             $extension = [System.IO.Path]::GetExtension($leafFileName)
             $nameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($leafFileName)
+            $VariablePath = $destinationPath
             # Only expand the symbol '.zip' package
             if($extension -ieq '.zip' -and $nameWithoutExtension.Contains("symbols"))
             {
                 $unzipPath = (Join-Path $destinationPath -ChildPath $nameWithoutExtension)
-                if($Variable)
-                {
-                    Write-VstsInformation -message "Setting VSTS variable '$Variable' to '$unzipPath'"
-                    # Sets a VSTS variable for use in future build steps.
-                    Write-Host "##vso[task.setvariable variable=$Variable]$unzipPath"
-                    # Set a variable in the current process. PowerShell will not pickup the variable until the process is restarted otherwise.
-                    Set-Item env:\$Variable -Value $unzipPath
-                }
                 Expand-Archive -Path $fileName -DestinationPath $unzipPath
+                $VariablePath = $unzipPath
+            }
+            
+            if($Variable)
+            {
+                Write-VstsInformation -message "Setting VSTS variable '$Variable' to '$VariablePath'"
+                # Sets a VSTS variable for use in future build steps.
+                Write-Host "##vso[task.setvariable variable=$Variable]$VariablePath"
+                # Set a variable in the current process. PowerShell will not pickup the variable until the process is restarted otherwise.
+                Set-Item env:\$Variable -Value $VariablePath
             }
 
             if(!$PublishAsFolder.IsPresent)
