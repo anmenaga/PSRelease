@@ -114,43 +114,9 @@ function Invoke-BuildInDocker
         {
             $publishParams['ArtifactAsFolder'] = $true
         }
-
         
         Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Filter $Artifact.Filter -Bucket $Artifact.Bucket @publishParams
     }
-
-    <#
-    $publishParams = @{}
-    if ($BuildData.VariableForExtractedBinariesPath)
-    {
-        if($BuildData.ArtifactsExpected -ne 1)
-        {
-            Write-Warning 'To use VariableForExtractedBinariesPath set ArtifactsExpected to 1'
-        }
-
-        $publishParams['Variable'] = $BuildData.VariableForExtractedBinariesPath
-    }
-
-    if ($BuildData.ArtifactsExpected -gt 0)
-    {
-        $publishParams['ExpectedCount'] = $BuildData.ArtifactsExpected
-    }
-
-    if ($BuildData.PublishAsFolder)
-    {
-        $publishParams['PublishAsFolder'] = $true
-    }
-
-    if ($BuildData.EnableFeature -and $BuildData.EnableFeature.Contains('ArtifactAsFolder'))
-    {
-        $publishParams['ArtifactAsFolder'] = $true
-    }
-
-    Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Bucket $BuildData.BinaryBucket @publishParams
-#>
-
-    
-
 }
 
 # Clone a github repo and recursively init submodules
