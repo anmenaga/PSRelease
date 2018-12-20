@@ -566,6 +566,8 @@ class Artifact
     [Bool]$PublishAsFolder = $false
     # Optional: Make multiple files published appear as a folder in VSTS
     [Bool]$ArtifactAsFolder = $false
+    # Optional: If the artifact is a zip file, then extract it to the subfolder with the same name; VariableName will be set to the extract path.
+    [Bool]$ExpandArchive = $false
 }
 
 # Class which describes the build data.

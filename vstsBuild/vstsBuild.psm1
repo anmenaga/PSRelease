@@ -70,7 +70,9 @@ function Publish-VstsBuildArtifact
         [parameter(HelpMessage="Publish the artifacts as a single folder rather than individual files")]
         [Switch]$PublishAsFolder,
         [parameter(HelpMessage="Make multiple files published appear as a folder in VSTS")]
-        [Switch]$ArtifactAsFolder
+        [Switch]$ArtifactAsFolder,
+        [parameter(HelpMessage="If the artifact is a zip file, then extract it to the subfolder with the same name; VariableName will be set to the extract path")]
+        [Switch]$ExpandArchive
     )
     $ErrorActionPreference = 'Continue'
     $ArtifactPathRoot = Join-Path -Path $ArtifactPath -ChildPath '*'
@@ -108,7 +110,7 @@ function Publish-VstsBuildArtifact
             $nameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($leafFileName)
             $VariablePath = $destinationPath
             # Only expand the symbol '.zip' package
-            if($extension -ieq '.zip' -and $nameWithoutExtension.Contains("symbols"))
+            if($extension -ieq '.zip' -and $ExpandArchive)
             {
                 $unzipPath = (Join-Path $destinationPath -ChildPath $nameWithoutExtension)
                 Expand-Archive -Path $fileName -DestinationPath $unzipPath
