@@ -114,6 +114,11 @@ function Invoke-BuildInDocker
         {
             $publishParams['ArtifactAsFolder'] = $true
         }
+
+        if ($Artifact.ExpandArchive)
+        {
+            $publishParams['ExpandArchive'] = $true
+        }
         
         Publish-VstsBuildArtifact -ArtifactPath (Get-Destination) -Filter $Artifact.Filter -Bucket $Artifact.Bucket @publishParams
     }
